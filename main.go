@@ -2,18 +2,41 @@ package main
 
 import (
 	"fmt"
+	"iulianpascalau/kaching-go/blockchain"
 	"os"
 	"os/exec"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 const filename = "./kaching.mp3"
+const address = "https://api.elrond.com"
+const poolInterval = time.Second * 6 //round time
 
 func main() {
 	if !fileExists(filename) {
 		fmt.Printf("file %s not found!\n", filename)
 	}
 
-	playSound(filename)
+	fmt.Println("application started")
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+
+	chPlaySound := make(chan struct{}, 1)
+
+	ew := blockchain.NewEpochWatcher(address, poolInterval, chPlaySound)
+	defer ew.Close()
+
+	for {
+		select {
+		case <-sigs:
+			fmt.Println("terminating at user's signal...")
+			return
+		case <-chPlaySound:
+			playSound(filename)
+		}
+	}
 }
 
 // fileExists checks if a file exists and is not a directory before we
