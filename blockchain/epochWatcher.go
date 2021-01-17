@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"iulianpascalau/kaching-go/logging"
 	"net/http"
 	"time"
 )
@@ -66,22 +67,22 @@ func (ew *epochWatcher) poll(ctx context.Context) {
 func (ew *epochWatcher) checkEpoch() {
 	bi, err := ew.getBlockchainEpoch()
 	if err != nil {
-		fmt.Println(err)
+		logging.MainLogger.Log(err.Error())
 		return
 	}
 
 	oldEpoch := ew.currentEpoch
 	ew.currentEpoch = bi.Epoch
 	if oldEpoch == epochNotRead {
-		fmt.Printf("epoch initialized to %d in round %d\n", bi.Epoch, bi.Round)
+		logging.MainLogger.Log(fmt.Sprintf("epoch initialized to %d in round %d\n", bi.Epoch, bi.Round))
 		return
 	}
 
 	if oldEpoch < bi.Epoch {
-		fmt.Printf("new epoch %d in round %d\n", bi.Epoch, bi.Round)
+		logging.MainLogger.Log(fmt.Sprintf("new epoch %d in round %d\n", bi.Epoch, bi.Round))
 		ew.chPlaySound <- struct{}{}
 	} else {
-		fmt.Printf("read epoch %d and round %d\n", bi.Epoch, bi.Round)
+		logging.MainLogger.Log(fmt.Sprintf("read epoch %d and round %d\n", bi.Epoch, bi.Round))
 	}
 }
 

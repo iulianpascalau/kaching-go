@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"iulianpascalau/kaching-go/blockchain"
+	"iulianpascalau/kaching-go/logging"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -15,11 +16,13 @@ const address = "https://api.elrond.com"
 const poolInterval = time.Second * 6 //round time
 
 func main() {
+	defer logging.MainLogger.CloseLogFile()
+
 	if !fileExists(filename) {
-		fmt.Printf("file %s not found!\n", filename)
+		logging.MainLogger.Log(fmt.Sprintf("file %s not found!", filename))
 	}
 
-	fmt.Println("application started")
+	logging.MainLogger.Log("application started")
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
@@ -31,7 +34,7 @@ func main() {
 	for {
 		select {
 		case <-sigs:
-			fmt.Println("terminating at user's signal...")
+			logging.MainLogger.Log("terminating at user's signal...")
 			return
 		case <-chPlaySound:
 			playSound(filename)
@@ -50,7 +53,7 @@ func fileExists(filename string) bool {
 }
 
 func playSound(filename string) {
-	fmt.Println("playing kaching...")
+	logging.MainLogger.Log("playing kaching...")
 	app := "mpg123"
 	arg := filename
 	cmd := exec.Command(app, arg)

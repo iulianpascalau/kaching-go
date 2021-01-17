@@ -8,7 +8,7 @@ echo "[Unit]
   [Service]
   User=ubuntu
   WorkingDirectory=/home/ubuntu/kaching-go
-  ExecStart=/home/ubuntu/kaching-go/kaching-go &>> logfile.log
+  ExecStart=/home/ubuntu/kaching-go/kaching-go
   StandardOutput=journal
   StandardError=journal
   Restart=always
