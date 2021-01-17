@@ -11,21 +11,21 @@ import (
 
 type blockInfo struct {
 	Hash  string `json:"hash"`
-	Epoch int    `json:"epoch"`
-	Shard int    `json:"shard"`
-	Round int    `json:"round"`
+	Epoch int64  `json:"epoch"`
+	Shard int64  `json:"shard"`
+	Round int64  `json:"round"`
 }
 
 //https://testnet-api.elrond.com/blocks?fields=epoch,shard
 const endpoint = "/blocks?fields=epoch,shard,round"
 const epochNotRead = -1
 const httpTimeout = time.Second * 5
-const metachainShardId = 0xFFFFFFFF
+const metachainShardId = int64(0xFFFFFFFF)
 
 type epochWatcher struct {
 	address         string
 	poolingInterval time.Duration
-	currentEpoch    int
+	currentEpoch    int64
 	cancelFunc      func()
 	chPlaySound     chan struct{}
 	httpClient      *http.Client
