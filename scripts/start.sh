@@ -1,0 +1,1 @@
+sudo systemctl start kaching-go
